@@ -17,9 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Settings.unity
     guid: d39d58c960a436447b6d009dabc7458f
-  - enabled: 1
-    path: Assets/Scenes/PauseScreen.unity
-    guid: 215952f46e796494fbd00b3a12ea4c6f
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects:
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 5ddf33d287105d045be6c9180355d91d, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: c0364814d8886d04b857d53f27d57d66, type: 2}
