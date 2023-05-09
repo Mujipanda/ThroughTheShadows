@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 public class CountTimer : MonoBehaviour
@@ -26,7 +27,11 @@ public class CountTimer : MonoBehaviour
         //Timer Start
         timer -= Time.deltaTime;
         if (timer <= 0) {
-            Application.LoadLevel(levelToLoad);
+            SceneManager.LoadScene(levelToLoad);
+        }
+
+        if (Input.GetMouseButtonDown(0)) {
+            SceneManager.LoadScene(levelToLoad);
         }
     }
 }
