@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.UI;
 
 public class PlayerMovment : MonoBehaviour
 {
@@ -82,7 +83,11 @@ public class PlayerMovment : MonoBehaviour
 
         anim();
     }
+    public void ButtonClick()
+    {
+        Debug.Log("button Pressed \n");
 
+    }
     void movement()
     {
         Vector2 horizontal = transform.TransformDirection(Vector2.right);
@@ -101,6 +106,7 @@ public class PlayerMovment : MonoBehaviour
 
         else if (Input.GetKey(KeyCode.A) && (speedX > -maxSpeed) && grounded && notFalling)
         {
+
             speedX -= speedMultipler;
 
             //Debug.Log("A key pressed \n");
