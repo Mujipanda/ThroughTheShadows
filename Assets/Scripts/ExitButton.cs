@@ -18,7 +18,7 @@ public class ExitButton : MonoBehaviour
         // When button is clicked 'QuitGame' method is running 
         button.onClick.AddListener(QuitGame);
     }
-
+    
     // 'QuitGame' method.
     void QuitGame()
     {
