@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+<<<<<<< Updated upstream
+=======
+  - EnemyAttack
+  - outOfBounds
+>>>>>>> Stashed changes
   layers:
   - Default
   - TransparentFX
