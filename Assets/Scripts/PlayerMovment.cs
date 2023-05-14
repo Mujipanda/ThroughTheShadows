@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.UI;
 
 public class PlayerMovment : MonoBehaviour
 {
@@ -25,7 +29,9 @@ public class PlayerMovment : MonoBehaviour
 
     private float rayDistance, sideRayDistance;
 
-    private bool notFalling = true, doubleJump = false, isDashing = false;
+    private bool notFalling = true, doubleJump = false, isDashing = false, stopDashing = true;
+
+    private bool walkingLeft, walkingRight;
 
     [SerializeField]
     private bool grounded = false;
@@ -41,10 +47,22 @@ public class PlayerMovment : MonoBehaviour
 
     [SerializeField] private GameObject playerObj, dashParticalEffect;
 
+    public Animator animator;
+    public GameObject animObj;
+
+  
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+      
        
+    }
+
+    private void Start()
+    {
+       animator = animObj.GetComponent<Animator>();
+        animObj.SetActive(true);
     }
     private void FixedUpdate()
     {
@@ -67,10 +85,32 @@ public class PlayerMovment : MonoBehaviour
 
         dashing();
 
+        anim();
 
         
     }
 
+
+    public void rightButtonDown()
+    {
+        Debug.Log("Pointer Down played");
+    }
+
+    public void OnPointerDown(PointerEventData data)
+    {
+
+        Debug.Log("Right Button Pressed \n");
+       
+
+    }
+
+   
+
+    public void OnPointerUp(PointerEventData data)
+    {
+        Debug.Log("button Pressed \n");
+
+    }
     void movement()
     {
         Vector2 horizontal = transform.TransformDirection(Vector2.right);
@@ -80,30 +120,27 @@ public class PlayerMovment : MonoBehaviour
             speedX += speedMultipler;
             //Debug.Log("D key pressed \n");
             //Debug.Log(speedX);
-
         }
-           
 
         // curspeedX -= (speedMultipler / 2);
 
         else if (Input.GetKey(KeyCode.A) && (speedX > -maxSpeed) && grounded && notFalling)
         {
+
             speedX -= speedMultipler;
 
             //Debug.Log("A key pressed \n");
             //Debug.Log(speedX);
         }
-            
 
+        // else if (!grounded)
+        //  inAir();
 
-
-       // else if (!grounded)
-          //  inAir();
-
-        else
+        else if (!Input.GetKey(KeyCode.A) || !Input.GetKey(KeyCode.D))
             stopping();
 
-
+       // else
+         //   stopping();
 
         //Mathf.RoundToInt(speedX);
         velocitySpeed = horizontal * Mathf.RoundToInt(speedX);
@@ -175,10 +212,12 @@ public class PlayerMovment : MonoBehaviour
     {
         speedXValueHold = speedX;
         isDashing = true;
+        stopDashing = false;
         speedX = dashingSpeed;
         dashingEffectRight();
         yield return new WaitForSeconds(0.2f);
         speedX = speedXValueHold;
+        stopDashing = true;
         yield return new WaitForSeconds(dashingDelay);
         isDashing = false;
     }
@@ -187,10 +226,12 @@ public class PlayerMovment : MonoBehaviour
     {
         speedXValueHold = speedX;
         isDashing = true;
+        stopDashing = false;
         speedX = -dashingSpeed;
         dashingEffectLeft();
         yield return new WaitForSeconds(0.2f);
         speedX = speedXValueHold;
+        stopDashing = true;
         yield return new WaitForSeconds(dashingDelay);
         isDashing = false;
 
@@ -231,8 +272,8 @@ public class PlayerMovment : MonoBehaviour
       
 
         RaycastHit hitSide;
-        if (Physics.Raycast(raycastPoint1.position, Vector3.right, out hitSide, 1) || Physics.Raycast(raycastPoint2.position, Vector3.right, out hitSide, 1) || 
-            Physics.Raycast(raycastPoint1.position, Vector3.left, out hitSide, 1) || Physics.Raycast(raycastPoint2.position, Vector3.left, out hitSide, 1))
+        if (Physics.Raycast(raycastPoint1.position, Vector3.right, out hitSide, 1, groundLayerMask) || Physics.Raycast(raycastPoint2.position, Vector3.right, out hitSide, 1, groundLayerMask) || 
+            Physics.Raycast(raycastPoint1.position, Vector3.left, out hitSide, 1, groundLayerMask) || Physics.Raycast(raycastPoint2.position, Vector3.left, out hitSide, 1, groundLayerMask))
         {
             sideRayDistance = hitSide.distance;
             if (sideRayDistance < 0.50 && grounded == false)// _______________set character thickness__________________________ thickness of character 
@@ -243,10 +284,18 @@ public class PlayerMovment : MonoBehaviour
             }
             else
                 notFalling = true;
-                
-        }
-    }
 
+        }
+        
+        Debug.DrawRay(raycastPoint1.position, Vector3.right * sideRayDistance, Color.green);
+        Debug.DrawRay(raycastPoint1.position, Vector3.left * sideRayDistance, Color.red);
+        Debug.DrawRay(raycastPoint2.position, Vector3.right * sideRayDistance, Color.green);
+        Debug.DrawRay(raycastPoint2.position, Vector3.left * sideRayDistance, Color.red);  
+        Debug.DrawRay(raycastPoint3.position, Vector3.down * rayDistance, Color.green);
+        Debug.DrawRay(raycastPoint4.position, Vector3.down * rayDistance, Color.red);
+        
+    }
+  
 
     void inAir()
     {
@@ -258,11 +307,12 @@ public class PlayerMovment : MonoBehaviour
     }
     void stopping()
     {
+      
         int intSpeedX = 0;
         Mathf.RoundToInt(speedX);
         intSpeedX = (int)speedX;
         //Debug.Log(intSpeedX);
-        if (speedX != 0 && grounded && !isDashing)
+        if (speedX != 0 && grounded && stopDashing)
         {
             if (speedX > 0)
             {
@@ -289,6 +339,51 @@ public class PlayerMovment : MonoBehaviour
     }
 
 
+    void anim()
+    {
+        if (Input.GetKey(KeyCode.A) && grounded)
+        {
+            walkingLeft = true;
+            walkingRight = false;
+        }
+          
+
+        else if (Input.GetKeyUp(KeyCode.A) && grounded)
+        {
+            walkingLeft = false;
+        }
+            
+
+
+        else if (Input.GetKey(KeyCode.D) && grounded)
+        {
+            walkingRight = true;
+            walkingLeft = false;
+        }
+            
+
+        else if (Input.GetKeyUp(KeyCode.D) && grounded)
+        {
+            walkingRight = false;
+        }
+         
+        else
+        {
+            walkingLeft = false;
+            walkingRight = false;
+        }
+
+        /*if (speedX < 0)
+        {
+            walkingLeft = true;
+        }
+        if (speedX > 0) 
+        {
+            walkingRight = true;
+        }*/
+        animator.SetBool("walk Left", walkingLeft);
+        animator.SetBool("walk right", walkingRight);
+    }
 
       void debuging()
       {
