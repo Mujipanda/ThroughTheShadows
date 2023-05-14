@@ -30,8 +30,7 @@ public class PlayerMovment : MonoBehaviour
 
     private bool notFalling = true, doubleJump = false, isDashing = false, stopDashing = true;
 
-    private bool walkingLeft, walkingRight;
-
+   
     [SerializeField]
     private bool grounded = false;
 
@@ -49,11 +48,15 @@ public class PlayerMovment : MonoBehaviour
     public Animator animator;
     public GameObject animObj;
 
+    private bool rightMovement = false;
+    private bool leftMovement = false;
+    private bool jumpMovement = false;
+    private bool lastJump = false;
+    private bool dashingMovement = false;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-       
-       
     }
     private void Start()
     {
@@ -82,29 +85,29 @@ public class PlayerMovment : MonoBehaviour
         dashing();
 
         anim();
-    }
-    public void ButtonClick()
-    {
-        Debug.Log("button Pressed \n");
 
+        unstuct();
     }
+   
+
     void movement()
     {
         Vector2 horizontal = transform.TransformDirection(Vector2.right);
 
-        if (Input.GetKey(KeyCode.D) && (speedX < maxSpeed) && grounded && notFalling)
+        if (rightMovement && (speedX < maxSpeed) && grounded && notFalling)
         {
             speedX += speedMultipler;
             //Debug.Log("D key pressed \n");
             //Debug.Log(speedX);
 
         }
+        
 
 
 
         // curspeedX -= (speedMultipler / 2);
 
-        else if (Input.GetKey(KeyCode.A) && (speedX > -maxSpeed) && grounded && notFalling)
+        else if (leftMovement && (speedX > -maxSpeed) && grounded && notFalling)
         {
 
             speedX -= speedMultipler;
@@ -129,16 +132,18 @@ public class PlayerMovment : MonoBehaviour
     void jumping()
     {
        
-        if (Input.GetKeyDown(KeyCode.Space) && grounded)
+        if (jumpMovement && grounded)
         {
+            jumpMovement = false;
             StartCoroutine(doubleJumpDelay());
             rb.velocity = new Vector2(rb.velocity.x, jumpMultiplyer);
             
         }
-        if (Input.GetKeyDown(KeyCode.Space) && doubleJump)
+        if (lastJump && doubleJump)
         {
            //Debug.Log("double jumping");
             rb.velocity = new Vector2(rb.velocity.x, secondJumpMultiplyer);
+            lastJump = false;
             doubleJump = false;
         }
        // if (Input.GetKeyDown(KeyCode.Space))
@@ -179,10 +184,10 @@ public class PlayerMovment : MonoBehaviour
     { if (!isDashing)
         {
             float speedXValueHold = 0;
-            if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.D))
+            if (dashingMovement && rightMovement)
                 StartCoroutine(dashDelayRight(speedXValueHold));
 
-            else if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.A))
+            else if (dashingMovement && leftMovement)
                 StartCoroutine(dashDelayLeft(speedXValueHold));
         }
 
@@ -190,6 +195,7 @@ public class PlayerMovment : MonoBehaviour
 
     IEnumerator dashDelayRight(float speedXValueHold) 
     {
+        dashingMovement = false;
         speedXValueHold = speedX;
         isDashing = true;
         stopDashing = false;
@@ -204,6 +210,7 @@ public class PlayerMovment : MonoBehaviour
 
     IEnumerator dashDelayLeft(float speedXValueHold) 
     {
+        dashingMovement = false;
         speedXValueHold = speedX;
         isDashing = true;
         stopDashing = false;
@@ -318,31 +325,63 @@ public class PlayerMovment : MonoBehaviour
         }
     }
 
+    // Registering button Inputs and enableing bools
+    public void rightButtonPress()
+    {
+        Debug.Log("button Pressed \n");
+        rightMovement = true;
+    }
+    public void rightButtonRelease()
+    {
+        rightMovement = false;
+    }
+
+    public void leftButtonPress()
+    {
+        leftMovement = true;
+    }
+    public void leftButtonRelease()
+    {
+        leftMovement= false;
+    }
+    public void dashingButtonPress()
+    {
+        dashingMovement = true;
+    }
+
+    public void jumpButtonPress()
+    {
+        if (grounded)
+            jumpMovement = true;
+
+        else if(doubleJump)
+            lastJump = true;
+    }
 
     void anim()
     {
-        if (Input.GetKey(KeyCode.A) && grounded)
+        /*
+        if (leftMovement && grounded)
         {
             walkingLeft = true;
             walkingRight = false;
         }
           
 
-        else if (Input.GetKeyUp(KeyCode.A) && grounded)
+        else if (!leftMovement && grounded)
         {
             walkingLeft = false;
         }
             
-
-
-        else if (Input.GetKey(KeyCode.D) && grounded)
+        else if (rightMovement && grounded)
         {
+            Debug.Log("right movement ");
             walkingRight = true;
             walkingLeft = false;
         }
             
 
-        else if (Input.GetKeyUp(KeyCode.D) && grounded)
+        else if (!rightMovement && grounded)
         {
             walkingRight = false;
         }
@@ -361,10 +400,18 @@ public class PlayerMovment : MonoBehaviour
         {
             walkingRight = true;
         }*/
-        animator.SetBool("walk Left", walkingLeft);
-        animator.SetBool("walk right", walkingRight);
+
+        animator.SetBool("walk Left", leftMovement);
+        animator.SetBool("walk right", rightMovement);
     }
 
+    void unstuct()
+    {
+        if(!grounded && speedX <= 0.1)
+        {
+            grounded = true;    
+        }
+    }
       void debuging()
       {
         Debug.Log(notFalling + " not falling");
