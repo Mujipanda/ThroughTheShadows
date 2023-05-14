@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.UI;
 
@@ -49,12 +50,15 @@ public class PlayerMovment : MonoBehaviour
     public Animator animator;
     public GameObject animObj;
 
+  
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-       
+      
        
     }
+
     private void Start()
     {
        animator = animObj.GetComponent<Animator>();
@@ -82,8 +86,27 @@ public class PlayerMovment : MonoBehaviour
         dashing();
 
         anim();
+
+        
     }
-    public void ButtonClick()
+
+
+    public void rightButtonDown()
+    {
+        Debug.Log("Pointer Down played");
+    }
+
+    public void OnPointerDown(PointerEventData data)
+    {
+
+        Debug.Log("Right Button Pressed \n");
+       
+
+    }
+
+   
+
+    public void OnPointerUp(PointerEventData data)
     {
         Debug.Log("button Pressed \n");
 
@@ -97,10 +120,7 @@ public class PlayerMovment : MonoBehaviour
             speedX += speedMultipler;
             //Debug.Log("D key pressed \n");
             //Debug.Log(speedX);
-
         }
-
-
 
         // curspeedX -= (speedMultipler / 2);
 
