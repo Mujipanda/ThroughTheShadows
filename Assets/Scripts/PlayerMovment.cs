@@ -43,7 +43,7 @@ public class PlayerMovment : MonoBehaviour
     private Transform raycastPoint1, raycastPoint2, raycastPoint3, raycastPoint4;
 
 
-    [SerializeField] private GameObject playerObj, dashParticalEffect;
+    [SerializeField] private GameObject playerObj, dashParticalEffect, doubleJumpParticalEffect;
 
     public Animator animator;
     public GameObject animObj;
@@ -152,6 +152,7 @@ public class PlayerMovment : MonoBehaviour
             doubleJumpActive = true;
            //Debug.Log("double jumping");
             rb.velocity = new Vector2(rb.velocity.x, secondJumpMultiplyer);
+            doubleJumpPsEffect();
             lastJump = false;
             doubleJump = false;
         }
@@ -164,9 +165,12 @@ public class PlayerMovment : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         doubleJump = true;
     }
+    
+    void doubleJumpPsEffect()
+    {
+        Instantiate(doubleJumpParticalEffect, playerObj.transform.position, doubleJumpParticalEffect.transform.rotation = Quaternion.Euler(new Vector3(0,-180,0)));
 
-
-
+    }
     void shrinking()
     {//__________________________________________working on needs finishing 
         int numSwitch = 0;
