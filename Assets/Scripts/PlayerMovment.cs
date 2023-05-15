@@ -55,7 +55,12 @@ public class PlayerMovment : MonoBehaviour
     private bool dashingMovement = false;
     private bool dashingLeft = false;
     private bool dashingRight = false;
-
+    private bool jumpinpLeft = false;
+    private bool jumpinpRight = false;
+    private bool doubleJumpLeft = false;
+    private bool doubleJumpRight = false;
+    private bool doubleJumpActive = false;
+   
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -88,7 +93,8 @@ public class PlayerMovment : MonoBehaviour
 
         anim();
 
-        unstuct();
+        keyBoardInputsDebugging();
+        //unstuct();
     }
    
 
@@ -143,6 +149,7 @@ public class PlayerMovment : MonoBehaviour
         }
         if (lastJump && doubleJump)
         {
+            doubleJumpActive = true;
            //Debug.Log("double jumping");
             rb.velocity = new Vector2(rb.velocity.x, secondJumpMultiplyer);
             lastJump = false;
@@ -186,10 +193,10 @@ public class PlayerMovment : MonoBehaviour
     { if (!isDashing)
         {
             float speedXValueHold = 0;
-            if (dashingMovement && rightMovement)
+            if (dashingMovement && rightMovement && speedX >0)
                 StartCoroutine(dashDelayRight(speedXValueHold));
 
-            else if (dashingMovement && leftMovement)
+            else if (dashingMovement && leftMovement && speedX <0)
                 StartCoroutine(dashDelayLeft(speedXValueHold));
         }
 
@@ -252,8 +259,8 @@ public class PlayerMovment : MonoBehaviour
             rayDistance = hitDown.distance;
             if (rayDistance < 0.08)//_____________ set character hight__________________________________ distance off the ground
             {
-                
-                
+
+
                 grounded = true;
                 doubleJump = false;
 
@@ -335,7 +342,7 @@ public class PlayerMovment : MonoBehaviour
     // Registering button Inputs and enableing bools
     public void rightButtonPress()
     {
-        Debug.Log("button Pressed \n");
+        //Debug.Log("button Pressed \n");
         rightMovement = true;
     }
     public void rightButtonRelease()
@@ -355,6 +362,10 @@ public class PlayerMovment : MonoBehaviour
     {
         dashingMovement = true;
     }
+    public void dashingButtonRelease()
+    {
+        dashingMovement= false;
+    }
 
     public void jumpButtonPress()
     {
@@ -362,11 +373,15 @@ public class PlayerMovment : MonoBehaviour
             jumpMovement = true;
 
         else if(doubleJump)
+        {
             lastJump = true;
+        }
+           
     }
 
     void anim()
     {
+       
         /*
         if (leftMovement && grounded)
         {
@@ -408,12 +423,88 @@ public class PlayerMovment : MonoBehaviour
             walkingRight = true;
         }*/
 
+        if (!grounded && leftMovement && !jumpinpRight || jumpinpLeft)
+        {
+            jumpinpLeft = true;
+        }
+        if (grounded)
+        {
+            
+            jumpinpLeft = false;
+            jumpinpRight = false;
+            doubleJumpActive = false;
+            doubleJumpRight = false;
+            doubleJumpLeft = false;
+
+        }
+        else if(rightMovement && !jumpinpLeft || jumpinpRight)
+        { 
+            jumpinpRight = true;
+        }
+        if(doubleJumpActive)
+        {
+           if(leftMovement && !doubleJumpRight || doubleJumpLeft)
+            {
+                jumpinpLeft = false; 
+                doubleJumpLeft = true;
+            }
+           else if(rightMovement && !doubleJumpLeft || doubleJumpRight)
+            {
+                jumpinpRight = false;
+                doubleJumpRight = true;
+            }
+        }
+
+        animator.SetBool("D jumping right", doubleJumpRight);
+        animator.SetBool("D jumping left", doubleJumpLeft);
+        animator.SetBool("jumping left", jumpinpLeft);
+        animator.SetBool("jumping right", jumpinpRight);
         animator.SetBool("dashing left", dashingLeft);
         animator.SetBool("dashing right", dashingRight);
         animator.SetBool("walk Left", leftMovement);
         animator.SetBool("walk right", rightMovement);
     }
+    void keyBoardInputsDebugging()
+    {
+        if(Input.GetKeyDown(KeyCode.D))
+            rightMovement = true;
+        if (Input.GetKeyUp(KeyCode.D))
+            rightMovement = false;
 
+        if (Input.GetKeyDown(KeyCode.A))
+            leftMovement = true;
+        if(Input.GetKeyUp(KeyCode.A))
+            leftMovement = false;
+
+        if( Input.GetKeyDown(KeyCode.Space))
+        {
+            if (grounded)
+            {
+                jumpMovement = true;
+                
+            }
+                
+
+            else if (doubleJump)
+            {
+                lastJump = true;
+
+            }
+           
+        }
+               
+        
+        if(Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            dashingMovement = true; 
+        }
+        if(Input.GetKeyUp(KeyCode.LeftShift))
+            dashingMovement= false;
+
+
+
+
+    }
     void unstuct()
     {
         if(!grounded && speedX <= 0.1)
