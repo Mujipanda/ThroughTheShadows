@@ -36,6 +36,8 @@ public class Healthscript2 : MonoBehaviour
     {
         if (collision.gameObject.tag == ("EnemyAttack"))
             StartCoroutine(damageDelay(damageDelaySecsInt));
+        if (collision.gameObject.tag == ("OutOfBoundsDeath"))
+            Death();
     }
 
 
@@ -76,7 +78,9 @@ public class Healthscript2 : MonoBehaviour
 
     void Death()
     {
-        Destroy(gameObject);
+        //Destroy(gameObject);
+    
+        gameObject.SetActive(false);
     }
 
     // Start is called before the first frame update

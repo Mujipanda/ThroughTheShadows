@@ -53,6 +53,8 @@ public class PlayerMovment : MonoBehaviour
     private bool jumpMovement = false;
     private bool lastJump = false;
     private bool dashingMovement = false;
+    private bool dashingLeft = false;
+    private bool dashingRight = false;
 
     private void Awake()
     {
@@ -195,6 +197,7 @@ public class PlayerMovment : MonoBehaviour
 
     IEnumerator dashDelayRight(float speedXValueHold) 
     {
+        dashingRight = true;
         dashingMovement = false;
         speedXValueHold = speedX;
         isDashing = true;
@@ -202,14 +205,17 @@ public class PlayerMovment : MonoBehaviour
         speedX = dashingSpeed;
         dashingEffectRight();
         yield return new WaitForSeconds(0.2f);
+        dashingRight = false;
         speedX = speedXValueHold;
         stopDashing = true;
         yield return new WaitForSeconds(dashingDelay);
         isDashing = false;
+        
     }
 
     IEnumerator dashDelayLeft(float speedXValueHold) 
     {
+        dashingLeft = true;
         dashingMovement = false;
         speedXValueHold = speedX;
         isDashing = true;
@@ -217,11 +223,12 @@ public class PlayerMovment : MonoBehaviour
         speedX = -dashingSpeed;
         dashingEffectLeft();
         yield return new WaitForSeconds(0.2f);
+        dashingLeft = false;
         speedX = speedXValueHold;
         stopDashing = true;
         yield return new WaitForSeconds(dashingDelay);
         isDashing = false;
-
+        
     }
 
 
@@ -401,6 +408,8 @@ public class PlayerMovment : MonoBehaviour
             walkingRight = true;
         }*/
 
+        animator.SetBool("dashing left", dashingLeft);
+        animator.SetBool("dashing right", dashingRight);
         animator.SetBool("walk Left", leftMovement);
         animator.SetBool("walk right", rightMovement);
     }
