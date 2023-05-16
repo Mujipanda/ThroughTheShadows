@@ -1,1 +1,58 @@
-2023 Group Project.
+## Through the Shadows : Group Project : Group 1
+
+## Through the Shadows (TTS) is a 2D platform game inspired by games such as Hollow Knight and Dead Cells 
+
+# The Project was made for the UoN Game Course as part of the Group Project Assignment ; and for fun :)
+# The Project is also a step into creating industry standard assets.
+
+## Installtion
+
+# The program is to be deployed via the .EXE file provided in the project, or via a .APK file on a android decvice. 
+
+## Credits
+
+# Project Lead : Jirayu B
+# Artist Lead : Vincent M
+# Design Lead : Raven T
+# Programming Lead : Rasmus S
+# Artist : Luke G 
+# Artist : Isabelle T 
+# Design : Mo O
+# Programmer : Cosmin C 
+# Programmer : Mihail F
+
+## Features
+
+# Full Movement control
+# Dashing
+# Enemies
+# Fun Platforming
+# and much more!!!
+
+## Tests 
+
+# Refer to testing Doc provided in the .Zip File
+
+# License
+
+MIT License
+
+Copyright (c) [year] [fullname]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.UI;
 
 public class PlayerMovment : MonoBehaviour
 {
@@ -29,8 +30,7 @@ public class PlayerMovment : MonoBehaviour
 
     private bool notFalling = true, doubleJump = false, isDashing = false, stopDashing = true;
 
-    private bool walkingLeft, walkingRight;
-
+   
     [SerializeField]
     private bool grounded = false;
 
@@ -43,16 +43,27 @@ public class PlayerMovment : MonoBehaviour
     private Transform raycastPoint1, raycastPoint2, raycastPoint3, raycastPoint4;
 
 
-    [SerializeField] private GameObject playerObj, dashParticalEffect;
+    [SerializeField] private GameObject playerObj, dashParticalEffect, doubleJumpParticalEffect;
 
     public Animator animator;
     public GameObject animObj;
 
+    private bool rightMovement = false;
+    private bool leftMovement = false;
+    private bool jumpMovement = false;
+    private bool lastJump = false;
+    private bool dashingMovement = false;
+    private bool dashingLeft = false;
+    private bool dashingRight = false;
+    private bool jumpinpLeft = false;
+    private bool jumpinpRight = false;
+    private bool doubleJumpLeft = false;
+    private bool doubleJumpRight = false;
+    private bool doubleJumpActive = false;
+   
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-       
-       
     }
     private void Start()
     {
@@ -81,26 +92,32 @@ public class PlayerMovment : MonoBehaviour
         dashing();
 
         anim();
+
+        keyBoardInputsDebugging();
+        //unstuct();
     }
+   
 
     void movement()
     {
         Vector2 horizontal = transform.TransformDirection(Vector2.right);
 
-        if (Input.GetKey(KeyCode.D) && (speedX < maxSpeed) && grounded && notFalling)
+        if (rightMovement && (speedX < maxSpeed) && grounded && notFalling)
         {
             speedX += speedMultipler;
             //Debug.Log("D key pressed \n");
             //Debug.Log(speedX);
 
         }
+        
 
 
 
         // curspeedX -= (speedMultipler / 2);
 
-        else if (Input.GetKey(KeyCode.A) && (speedX > -maxSpeed) && grounded && notFalling)
+        else if (leftMovement && (speedX > -maxSpeed) && grounded && notFalling)
         {
+
             speedX -= speedMultipler;
 
             //Debug.Log("A key pressed \n");
@@ -123,16 +140,20 @@ public class PlayerMovment : MonoBehaviour
     void jumping()
     {
        
-        if (Input.GetKeyDown(KeyCode.Space) && grounded)
+        if (jumpMovement && grounded)
         {
+            jumpMovement = false;
             StartCoroutine(doubleJumpDelay());
             rb.velocity = new Vector2(rb.velocity.x, jumpMultiplyer);
             
         }
-        if (Input.GetKeyDown(KeyCode.Space) && doubleJump)
+        if (lastJump && doubleJump)
         {
+            doubleJumpActive = true;
            //Debug.Log("double jumping");
             rb.velocity = new Vector2(rb.velocity.x, secondJumpMultiplyer);
+            doubleJumpPsEffect();
+            lastJump = false;
             doubleJump = false;
         }
        // if (Input.GetKeyDown(KeyCode.Space))
@@ -144,9 +165,12 @@ public class PlayerMovment : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         doubleJump = true;
     }
+    
+    void doubleJumpPsEffect()
+    {
+        Instantiate(doubleJumpParticalEffect, playerObj.transform.position, doubleJumpParticalEffect.transform.rotation = Quaternion.Euler(new Vector3(0,-180,0)));
 
-
-
+    }
     void shrinking()
     {//__________________________________________working on needs finishing 
         int numSwitch = 0;
@@ -173,10 +197,10 @@ public class PlayerMovment : MonoBehaviour
     { if (!isDashing)
         {
             float speedXValueHold = 0;
-            if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.D))
+            if (dashingMovement && rightMovement && speedX >0)
                 StartCoroutine(dashDelayRight(speedXValueHold));
 
-            else if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKey(KeyCode.A))
+            else if (dashingMovement && leftMovement && speedX <0)
                 StartCoroutine(dashDelayLeft(speedXValueHold));
         }
 
@@ -184,31 +208,38 @@ public class PlayerMovment : MonoBehaviour
 
     IEnumerator dashDelayRight(float speedXValueHold) 
     {
+        dashingRight = true;
+        dashingMovement = false;
         speedXValueHold = speedX;
         isDashing = true;
         stopDashing = false;
         speedX = dashingSpeed;
         dashingEffectRight();
         yield return new WaitForSeconds(0.2f);
+        dashingRight = false;
         speedX = speedXValueHold;
         stopDashing = true;
         yield return new WaitForSeconds(dashingDelay);
         isDashing = false;
+        
     }
 
     IEnumerator dashDelayLeft(float speedXValueHold) 
     {
+        dashingLeft = true;
+        dashingMovement = false;
         speedXValueHold = speedX;
         isDashing = true;
         stopDashing = false;
         speedX = -dashingSpeed;
         dashingEffectLeft();
         yield return new WaitForSeconds(0.2f);
+        dashingLeft = false;
         speedX = speedXValueHold;
         stopDashing = true;
         yield return new WaitForSeconds(dashingDelay);
         isDashing = false;
-
+        
     }
 
 
@@ -232,8 +263,8 @@ public class PlayerMovment : MonoBehaviour
             rayDistance = hitDown.distance;
             if (rayDistance < 0.08)//_____________ set character hight__________________________________ distance off the ground
             {
-                
-                
+
+
                 grounded = true;
                 doubleJump = false;
 
@@ -312,31 +343,71 @@ public class PlayerMovment : MonoBehaviour
         }
     }
 
+    // Registering button Inputs and enableing bools
+    public void rightButtonPress()
+    {
+        //Debug.Log("button Pressed \n");
+        rightMovement = true;
+    }
+    public void rightButtonRelease()
+    {
+        rightMovement = false;
+    }
+
+    public void leftButtonPress()
+    {
+        leftMovement = true;
+    }
+    public void leftButtonRelease()
+    {
+        leftMovement= false;
+    }
+    public void dashingButtonPress()
+    {
+        dashingMovement = true;
+    }
+    public void dashingButtonRelease()
+    {
+        dashingMovement= false;
+    }
+
+    public void jumpButtonPress()
+    {
+        if (grounded)
+            jumpMovement = true;
+
+        else if(doubleJump)
+        {
+            lastJump = true;
+        }
+           
+    }
 
     void anim()
     {
-        if (Input.GetKey(KeyCode.A) && grounded)
+       
+        /*
+        if (leftMovement && grounded)
         {
             walkingLeft = true;
             walkingRight = false;
         }
           
 
-        else if (Input.GetKeyUp(KeyCode.A) && grounded)
+        else if (!leftMovement && grounded)
         {
             walkingLeft = false;
         }
             
-
-
-        else if (Input.GetKey(KeyCode.D) && grounded)
+        else if (rightMovement && grounded)
         {
+            Debug.Log("right movement ");
             walkingRight = true;
             walkingLeft = false;
         }
             
 
-        else if (Input.GetKeyUp(KeyCode.D) && grounded)
+        else if (!rightMovement && grounded)
         {
             walkingRight = false;
         }
@@ -355,10 +426,96 @@ public class PlayerMovment : MonoBehaviour
         {
             walkingRight = true;
         }*/
-        animator.SetBool("walk Left", walkingLeft);
-        animator.SetBool("walk right", walkingRight);
-    }
 
+        if (!grounded && leftMovement && !jumpinpRight || jumpinpLeft)
+        {
+            jumpinpLeft = true;
+        }
+        if (grounded)
+        {
+            
+            jumpinpLeft = false;
+            jumpinpRight = false;
+            doubleJumpActive = false;
+            doubleJumpRight = false;
+            doubleJumpLeft = false;
+
+        }
+        else if(rightMovement && !jumpinpLeft || jumpinpRight)
+        { 
+            jumpinpRight = true;
+        }
+        if(doubleJumpActive)
+        {
+           if(leftMovement && !doubleJumpRight || doubleJumpLeft)
+            {
+                jumpinpLeft = false; 
+                doubleJumpLeft = true;
+            }
+           else if(rightMovement && !doubleJumpLeft || doubleJumpRight)
+            {
+                jumpinpRight = false;
+                doubleJumpRight = true;
+            }
+        }
+
+        animator.SetBool("D jumping right", doubleJumpRight);
+        animator.SetBool("D jumping left", doubleJumpLeft);
+        animator.SetBool("jumping left", jumpinpLeft);
+        animator.SetBool("jumping right", jumpinpRight);
+        animator.SetBool("dashing left", dashingLeft);
+        animator.SetBool("dashing right", dashingRight);
+        animator.SetBool("walk Left", leftMovement);
+        animator.SetBool("walk right", rightMovement);
+    }
+    void keyBoardInputsDebugging()
+    {
+        if(Input.GetKeyDown(KeyCode.D))
+            rightMovement = true;
+        if (Input.GetKeyUp(KeyCode.D))
+            rightMovement = false;
+
+        if (Input.GetKeyDown(KeyCode.A))
+            leftMovement = true;
+        if(Input.GetKeyUp(KeyCode.A))
+            leftMovement = false;
+
+        if( Input.GetKeyDown(KeyCode.Space))
+        {
+            if (grounded)
+            {
+                jumpMovement = true;
+                
+            }
+                
+
+            else if (doubleJump)
+            {
+                lastJump = true;
+
+            }
+           
+        }
+               
+        
+        if(Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            dashingMovement = true; 
+        }
+        if(Input.GetKeyUp(KeyCode.LeftShift))
+            dashingMovement= false;
+
+
+
+
+    }
+    void unstuct()
+    {
+        if(!grounded && speedX <= 0.1)
+        {
+            grounded = true;    
+        }
+    }
       void debuging()
       {
         Debug.Log(notFalling + " not falling");
