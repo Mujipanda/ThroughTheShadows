@@ -89,6 +89,7 @@ public class Healthscript2 : MonoBehaviour
         //Destroy(gameObject);
     
         gameObject.SetActive(false);
+        SceneManager.LoadScene(6);
     }
 
     void gameFinish()
