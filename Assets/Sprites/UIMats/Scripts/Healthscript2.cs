@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Healthscript2 : MonoBehaviour
 {
@@ -11,10 +12,12 @@ public class Healthscript2 : MonoBehaviour
     [SerializeField]
     private Image[] healthActive; // health images 
 
+    
+
     [SerializeField] private int healthCurrent, damageDelaySecsInt; // set in inspector 
 
- 
 
+    public GameObject enemy1;
 
     void Awake()
     {
@@ -38,6 +41,11 @@ public class Healthscript2 : MonoBehaviour
             StartCoroutine(damageDelay(damageDelaySecsInt));
         if (collision.gameObject.tag == ("OutOfBoundsDeath"))
             Death();
+        if(collision.gameObject.tag == ("end of game"))
+            gameFinish();
+
+        if (collision.gameObject.tag == ("EnemyHitBox"))
+            killEnemy();
     }
 
 
@@ -83,6 +91,18 @@ public class Healthscript2 : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    void gameFinish()
+    {
+        SceneManager.LoadScene(6);
+        Debug.Log("game End");
+
+    }
+
+
+   void killEnemy()
+    {
+        enemy1.SetActive(false);
+    }
     // Start is called before the first frame update
     void Start()
     {

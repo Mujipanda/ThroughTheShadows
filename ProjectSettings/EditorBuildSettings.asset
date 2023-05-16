@@ -23,6 +23,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level1.unity
     guid: b9840baf35cf7bd47bf60de66b7b9bf3
+  - enabled: 1
+    path: Assets/Scenes/End Game.unity
+    guid: 824f7764d5281284097a29e1840deb33
   m_configObjects:
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 5ddf33d287105d045be6c9180355d91d, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: c0364814d8886d04b857d53f27d57d66, type: 2}
