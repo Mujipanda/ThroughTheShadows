@@ -93,7 +93,7 @@ public class Healthscript2 : MonoBehaviour
 
     void gameFinish()
     {
-        SceneManager.LoadScene(6);
+        SceneManager.LoadScene(7);
         Debug.Log("game End");
 
     }
