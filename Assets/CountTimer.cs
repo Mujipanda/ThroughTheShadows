@@ -8,8 +8,9 @@ using UnityEngine.SceneManagement;
 public class CountTimer : MonoBehaviour
 {
     //Level Load, Timer, Debug
+    public float timer = 4f;
     public string levelToLoad;
-    private float timer = 4f;
+    
    
 
 
